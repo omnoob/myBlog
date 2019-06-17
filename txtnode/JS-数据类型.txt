@@ -1,0 +1,84 @@
+JS基础之数据类型 结合阮一峰的教程
+1.7种数据类型：数字   字符串 布尔    符号   null undefined 对象
+               number string boolean symbol null undefined object
+	    判断：JS一切皆对象 （X） 
+		除了前面的六种，其余的都是对象
+	1.number 
+	    十进制：  二进制     八进制    十六进制
+		1         0b11       011        0x11
+		1.1（.1）（0b开头） （0开头） （0x开头）
+		1.23e2
+	2.string
+	    "" '' 空字符串（长度0）空格字符串（长度1）
+		转义：字符串内有单引号或者双引号时，用转义符(\)。
+		 比如：'\''==单引号  '\n'==回车 '\t'==制表符tab
+		 字符串里有反斜杠时，表示为 '\\'==\
+		
+		多行字符串（不是字符串里有回车）用反斜杠+回车即可
+		例如：var s= '12345 \            ①坑人写法，因为第一行后面如果加空格的话就会报错
+		              67890'
+              或者 s2= '12345'+          ②好读的语法
+			           '67890'
+			ES6 var s3=`12345回车
+			    67890`    此处符号为1左边的符号。
+	3.布尔 boolean 只有两个值：ture/false
+	  经常和 &&(与) ||(或) 连用
+    4.symbol （搜索 方应杭 symbol）
+	
+	5.null类型  值：null
+	6.undefined类型 值：undefined
+	56一起说：js之父的BUG
+	  ①如果一个变量没有值-undefined
+	  ②如果有一个对象object，现在不想给值-null 空对象
+	       有一个非对象，不想给值-undefined    空非对象
+		这只是一个惯例。
+	
+以上为基本类型（简单类型）	
+---------------------------------------------------------------------	
+以下为复杂类型，由简单类型组成
+	7.对象 object 哈希表
+	     例如：
+	   ①声明对象：
+		 var person={  // 哈希表key值可以不加引号，但是注意命名规则。
+					  'name':'frank',
+					  'age':18,
+					  'gander':'male'
+					  'marride':ture,
+					  'children':null,
+					  'xiaosan':undefined
+					  'classmate':{name:'xxx',age:12,},
+					  'self':person (对象内可以有自己) // 实际用的时候不能这样写，要先写var a = {};a.self = a;
+					  '':'空字符串'  （引用的时候 person[''] =='空字符串'）
+		            }
+	   ②读取字符串：person['name'] 单引号不能省略！
+	          特例：如何中括号内的的变量符合命名规则，可变为 person.name
+	   ③delete
+	   delete person['name']
+	   person.name //undefined (无value)
+	   'name' in person //false (无key)
+	   ④遍历对象(for...in)(对象是一组键值对组合，是一种无需的复合数据组合)
+		    for(var key in person){
+			  console.log(key)
+		    }
+		    结果：name
+				  age
+				  ...
+			
+			for(var key in person){
+			   console.log(person[key])
+			}
+			结果：frank
+				  18
+				  ...
+			
+						for(var key in person){
+			   console.log(key, person[key])
+			}
+			结果：name frank
+				  age  18
+				  ...
+	   ⑤typeof 变量名 来查看该变量的数据类型
+				 
+	    BUG注：①typeof null  // 'object'
+		       ②typeof function // 'function'
+	   
