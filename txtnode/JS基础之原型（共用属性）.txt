@@ -1,0 +1,40 @@
+JS基础之原型（共用属性）
+
+一.全局对象 global (浏览器 window )
+注：浏览器中的全局对象是 window，后来ECMAScript规定全局对象叫global，注意区分！
+    google：MDN window 即可学习到所有的浏览器API 
+这些全局变量分为两种：
+
+1.一种是 ECMAScript 规定的
+
+global.parseInt
+global.parseFloat
+global.Number
+global.String
+global.Boolean
+global.Object
+...
+1.1 Number()
+①Number('XX') 将括号内的东西变成数字
+②var n = new Number(1) 效果： 1 => {valueof():1,} 把1这个数字包装
+
+
+
+
+
+
+2.一种是浏览器自己加的属性
+
+window.alert（弹框提示）
+window.prompt（用户填写）
+window.comfirm（用户确认）
+window.console.log（开发者打印）
+window.console.dir
+window.document（文档）（DOM规范）
+window.document.createElement
+window.document.getElementById
+window.setTimeout（函数b，时间a）a时间后执行函数b
+window.gistory(浏览器历史)（BOM）
+...
+
+、
