@@ -1,0 +1,222 @@
+﻿JS 实践之动效制作
+
+解决一个问题的关键 是 马上着手去解决这个问题。
+  当你想做一个效果，不知道怎么办，马上就去做，第一次不需要完美，能做出来，然后改进就好。
+1.sticky navbar(粘)
+	/1.滚动后背景变白有阴影且变矮。
+	   ①判断是否滚动，滚动就给topNavBar的class添加sticky，否则去除sticky。
+        此处的滚动是指strollY
+        注:JS 与 id 搭配使用，尽量不和class搭配，这样更规范。
+        JS只改变class，其他地方一概不动，这样能写出好的JS。
+        XXXX.classList.add/remove('') 就可以做各种特效
+	   ②背景设置为白色，加上阴影，设置padding上下变矮。
+	/2.字体从灰色变成黑色。
+	   ①设置topNavBar的颜色是灰色，设置sticky的颜色是黑色，a标签的颜色为继承
+
+2.auto highlight navbar(自动高亮)(随着滚动，导航栏的菜单会依次底部高亮)
+
+
+
+3.auto scroll smoothly(导航栏底部平滑自动滚动)
+	观察：鼠标放在导航栏的标签底部会从左到右动
+	/1.将底部的边框变成一个假的div
+	/2.给这个div添加动画
+
+4.submenu(子菜单)
+	观察：鼠标悬停时子菜单自动显示出来
+	/1.onmouseenter、onmouseleave 监听鼠标的动向，.当enter时找到ul给予active，leave时去除active
+		let aTags = document.getElementsByClassName('menuTigger')
+		for(let i=0; i<aTags.length; i++){
+        aTags[i].onmouseenter = function(x){
+          let a = x.currentTarget
+          let brother = a.nextSibling     //获得nodetype=1的brother即节点
+          while(brother.nodeType === 3){  //3代表文本，1代表节点
+            brother = brother.nextSibling
+          }
+          brother.classList.add('active')
+        }
+        aTags[i].onmouseleave = function(x){
+          let a = x.currentTarget
+          let brother = a.nextSibling     //获得nodetype=1的brother即节点
+          while(brother.nodeType === 3){  //3代表文本，1代表节点
+            brother = brother.nextSibling
+          }
+          brother.classList.remove('active')
+        }
+      }
+	/2.发现鼠标移向子菜单时，子菜单就消失：改变监听对象为li
+	   把class="menuTigger"从a标签移动到li标签
+		let liTags = document.getElementsByClassName('menuTigger')
+      for(let i=0; i<liTags.length; i++){
+        liTags[i].onmouseenter = function(x){
+          let li = x.currentTarget
+          let brother = li.getElementsByTagName('ul')[0]     
+          brother.classList.add('active')
+        }
+        liTags[i].onmouseleave = function(x){
+          let li = x.currentTarget
+          let brother = li.getElementsByTagName('ul')[0]     
+          brother.classList.remove('active')
+        }
+      }
+	  /3.发现鼠标移向子菜单时，红色下边框消失：把active给li，就不需要找ui
+	  JS：
+		let liTags = document.getElementsByClassName('menuTigger')
+      for(let i=0; i<liTags.length; i++){
+        liTags[i].onmouseenter = function(x){
+          x.currentTarget.classList.add('active')
+        }
+        liTags[i].onmouseleave = function(x){
+          x.currentTarget.classList.remove('active')
+        }
+      }
+	  CSS：
+		见源代码
+	   /4.发现其他没有子菜单的a标签失去了红色下边框：给nav一个class为menu，然后找nav.menu > ul > li
+	   let liTags = document.querySelectorAll('nav.menu > ul > li')
+	         for(let i=0; i<liTags.length; i++){
+        liTags[i].onmouseenter = function(x){
+          x.currentTarget.classList.add('active')
+        }
+        liTags[i].onmouseleave = function(x){
+          x.currentTarget.classList.remove('active')
+        }
+      }
+	    效果：给nav.menu > ul > li都加上红色下边框动画，且加上active
+	     
+5.auto hide aside(自动隐藏侧边栏)
+
+
+6.(无缝轮播)
+
+
+7.loading animation(loading动画)
+/1.制作loading动画
+第一版：
+css：
+.w{
+  width: 200px;
+  height: 200px;
+  border:1px solid red;
+  position: relative; //绝对定位
+}
+.c{
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: black;
+  border-radius: 50%;
+  top: 0px;
+  left: 0px;
+  bottom: 0px;
+  right: 0px;
+  margin: auto;  //居中
+  animation: s 1.5s linear infinite; //添加动画s，播放时间1.5s，线性变化，无限循环
+}
+
+@keyframes s{ // keyframe：给动画s设置样式
+  0%{
+    width: 0px;height: 0px;opacity: 1; //opacity：不透明性
+  }
+  100%{
+    width: 100px;height: 100px;opacity: 0;
+  }
+}
+css.优化：（上个版本是两个div的圈，现在可以使用before、after）
+.loading{
+  width: 200px;
+  height: 200px;
+  border:1px solid red;
+  position: relative;
+}
+.loading::before,.loading::after{
+  content: '';
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: black;
+  border-radius: 50%;
+  top: 0px;
+  left: 0px;
+  bottom: 0px;
+  right: 0px;
+  margin: auto;
+  animation: s 1.5s linear infinite;
+}
+.loading::after{
+  animation-delay: 0.75s;
+}
+@keyframes s{
+  0%{
+    width: 0px;height: 0px;opacity: 1;
+  }
+  100%{
+    width: 100px;height: 100px;opacity: 0;
+  }
+}
+/2.放入html并loading动画优先显示：
+html：
+ .site-welcome{
+      display: none;
+      position: fixed;
+      top: 0;left: 0;width: 100%;height: 100%; /*让loading占据整个屏幕*/
+      background: #888;
+      z-index: 1; /*设置元素的堆叠顺序；可为负值；仅能在定位元素上奏效，例如position：absolute*/
+      justify-content: center;    /*居中*/
+      align-items: center;        /*居中*/
+    }
+    .site-welcome.active{
+      display: flex;
+    }
+</style>
+</head>
+
+  <body>
+     <div id="siteWelcome" class="site-welcome active">
+      <div class="loading"></div> 
+     </div>
+...............
+    </section>
+    <script>
+      siteWelcome.classList.remove('active') /*页面读取完去除active即可消除loading*/
+    </script>
+  </body>	 
+
+备注：开启animations的方法，可让页面动画变速，便于观察
+      见animations图。
+	  
+8.animate when scroll(滚动时才有动画)
+
+9.点击导航栏里的选项，会跳转到对应区域：
+  直接给href="某标签ID"，跳转时发现导航栏遮住了一部分，所以用JS做这个跳转；
+  注释：1.函数传递的第一个参数有个方法叫preventDefault()，它会阻止默认动作
+		2.a.href是带http协议的，即#xx为网址+xxx；a.getAttribute('href')是用户写什么就是什么，不作任何改变(#xxx就是#xxx)。
+	let aTags =  document.querySelectorAll('nav.menu > ul > li > a')
+      for(let i=0; i<aTags.length; i++){
+        aTags[i].onclick = function(x){
+          x.preventDefault()
+          let a = x.currentTarget
+          let href = a.getAttribute('href')
+          let element = document.querySelector(href)
+          let top = element.offsetTop // 获得目标距离最顶部的距离，不会随滚动改变
+          window.scrollTo(0, top - 80)
+        }
+      }
+
+
+
+
+API总结：	
+1.setTimeOut() 一定时间后执行代码
+2.window.onscroll 用户滑动窗口时触发一个函数
+3.window.scrollY 窗口滚动时获取高度
+4.document.querySelectorAll() 接收一个选择器，返回选择器的所有元素（是数组）
+5.onmouseenter 当鼠标进入一个元素的时候会触发一个函数
+6.onmouseleave 当鼠标离开一个元素的时候会触发一个函数
+7.preventDefault 函数返回的第一个元素有这个API，取消该元素的默认动作
+8.getAttri 每个元素都有这个API，获取用户在这个元素上写的原文
+9.document.querySelector() 获取第一个元素（不是数组，是一个元素）
+10.offsetTop 获得一个元素到页面顶部的距离，不随滚动改变
+11.window.scrollTo(x,y) 滑动到某个位置
+
+更新
