@@ -14,12 +14,59 @@
 	   ①设置topNavBar的颜色是灰色，设置sticky的颜色是黑色，a标签的颜色为继承
 
 2.auto highlight navbar(自动高亮)(随着滚动，导航栏的菜单会依次底部高亮)
+	  let specialTags = document.querySelectorAll('[data-x]')
+      let minIndex = 0
+      for(let i=0; i<specialTags.length; i++){
+        if(Math.abs(specialTags[i].offsetTop-window.scrollY) < Math.abs(specialTags[minIndex].offsetTop-window.scrollY)){
+          minIndex = i
+        }
+      }
+      let id = specialTags[minIndex].id
+      let a = document.querySelector('a[href="#'+ id + '"]')
+      let li = a.parentNode
+      let brotherAndMe = li.parentNode.children
+      for(let i=0; i<brotherAndMe.length; i++){
+        brotherAndMe[i].classList.remove('highlight')
+      }
+      li.classList.add('highlight')
 
 
+
+
+
+--------------------------------------------------------------------------------------------------------------------------
+ 点击导航栏里的选项，会跳转到对应区域：
+  直接给href="某标签ID"，跳转时发现导航栏遮住了一部分，所以用JS做这个跳转；
+  注释：1.函数传递的第一个参数有个方法叫preventDefault()，它会阻止默认动作
+		2.a.href是带http协议的，即#xx为网址+xxx；a.getAttribute('href')是用户写什么就是什么，不作任何改变(#xxx就是#xxx)。
+	let aTags =  document.querySelectorAll('nav.menu > ul > li > a')
+      for(let i=0; i<aTags.length; i++){
+        aTags[i].onclick = function(x){
+          x.preventDefault()
+          let a = x.currentTarget
+          let href = a.getAttribute('href')
+          let element = document.querySelector(href)
+          let top = element.offsetTop // 获得目标距离最顶部的距离，不会随滚动改变
+          window.scrollTo(0, top - 80)
+        }
+      }
+	优化:跳转的过程要缓和一些，而不是突然就过去了。（此动画不能用CSS做，因为是滚动条，需要用JS做）
+		注释：setTimeout 动一次 setInterval 一直动
+			var n = 0
+			var id =  setInterval(()=>{
+			  n = n+1
+			  div1.style.left = n +'px'
+			  if(n>=200){
+				window.clearInterval(id)
+			  }
+			},40)
+			套路：id= xxx 里面再window.clearxxx(id) 动画停止的原理
+	再优化：模板中，根据距离的不同，页面滚动的速度是不同的，加入缓动函数
+			tween：缓动
 
 3.auto scroll smoothly(导航栏底部平滑自动滚动)
 	观察：鼠标放在导航栏的标签底部会从左到右动
-	/1.将底部的边框变成一个假的div
+	/1.将底部的边框变成一个假的div（::after 伪元素）
 	/2.给这个div添加动画
 
 4.submenu(子菜单)
@@ -186,22 +233,10 @@ html：
       见animations图。
 	  
 8.animate when scroll(滚动时才有动画)
-
-9.点击导航栏里的选项，会跳转到对应区域：
-  直接给href="某标签ID"，跳转时发现导航栏遮住了一部分，所以用JS做这个跳转；
-  注释：1.函数传递的第一个参数有个方法叫preventDefault()，它会阻止默认动作
-		2.a.href是带http协议的，即#xx为网址+xxx；a.getAttribute('href')是用户写什么就是什么，不作任何改变(#xxx就是#xxx)。
-	let aTags =  document.querySelectorAll('nav.menu > ul > li > a')
-      for(let i=0; i<aTags.length; i++){
-        aTags[i].onclick = function(x){
-          x.preventDefault()
-          let a = x.currentTarget
-          let href = a.getAttribute('href')
-          let element = document.querySelector(href)
-          let top = element.offsetTop // 获得目标距离最顶部的距离，不会随滚动改变
-          window.scrollTo(0, top - 80)
-        }
-      }
+	1.首先给每个标记都加上offset，当滚动到该标记就去除offset （发现第一个标记应该一开始就没有offset）
+	2.使用函数并设置延迟即可。
+9.技能栏动画
+	
 
 
 
@@ -219,4 +254,7 @@ API总结：
 10.offsetTop 获得一个元素到页面顶部的距离，不随滚动改变
 11.window.scrollTo(x,y) 滑动到某个位置
 
-更新
+本节课知识点：用三种方法做动画
+1.js 找元素，给元素加或者删class
+2.animation
+3.transform + transition
