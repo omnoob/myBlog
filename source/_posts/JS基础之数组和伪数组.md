@@ -193,28 +193,82 @@ a.reduce(function(arr,n){ //arr是上一次的数组，n是数组a的每个元�
 结果：
     [2,4,6,8,10]
 ```
+------------------------------------------------------------
 
 ## 二、Function  
 Function.prototype{.call(),.bind(),.apply()}  
 用法：`new Function ([[参数1,参数2,...,参数n],]函数体)`      
 &nbsp;&nbsp;&nbsp;注：[..]内的内容为可选内容，可有可无。  
 例如：`var f = new Function('a','b','return a+b')`  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`f(1,2)`=>`3`  
-**f**unction 是一个**关键字**，用来声明一个函数：`function f(){}`  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`f(1,2)`=>`3`   
+- function x 是一个特殊的变量，就是对象中的函数。  
+- **f**unction 是一个**关键字**，用来声明一个函数：`function f(){}`  
 **F**unction 是一个**全局变量**，用法为：`var f = new Function('x','y','x+y')`  
 注意基础概念来进行区分。
 
-* 声明function的几种方法：  
+### 1. 函数声明的五种方式  
+1. **具名函数**：直接一步到位
 ```
-1.具名函数：直接一步到位  
-function f(){
-    return
+function f(x，y){
+    return x+y
 }
-2.匿名函数:先声明一个f，然后f指向匿名函数
+f.name // 'f'
+```
+2. **匿名函数**:匿名函数无法直接声明，所以要先声明一个变量，然后将匿名函数赋给该函数
+```
 var f
 f = function (){
     teturn
 }
-3.Function：此法一般不用
-new Function('x','y','s+y')
+f.name // 'f'
+```
+3. **具名函数赋值**：
+```
+var f
+ f = function f2(x,y){ return x+y }
+ f.name // 'f2'
+ console.log(f2) // undefined   面试题
 ``` 
+![](https://user-gold-cdn.xitu.io/2019/7/4/16bbc167555332eb?w=1047&h=651&f=png&s=242675)  
+
+4. **window.function**:此法一般不用
+```
+var f = new Function('x','y','return x+y')
+//括号内都是字符串，字符串之间可以拼接插入变量，比如n=1，'return x+'+n+'+y' === return x+1+y
+ f.name // "anonymous" （翻译：匿名的）
+``` 
+5. **箭头函数**
+```
+ var f = (x,y) => {
+     return x+y
+ }
+ ① var sum = (x,y) => {return x+y} 
+ ② 若大括号内只有一句话，则可去掉大括号和return，即
+    var sum = (x,y) => x+y
+ ③ 若小括号里只有一个参数，则可去掉小括号，即 
+    var n2 = n => n*n
+注：1. => 中间不能有空格
+    2. 复杂时，只需要加分号即可，JS里换行不换行没有意义。
+```
+### 2. 函数调用
+
+声明：为了学会后面的this，一定要学会硬核的函数调用方法，如图：
+![](https://user-gold-cdn.xitu.io/2019/7/4/16bbc4e0a4884291?w=1163&h=730&f=png&s=200105)  
+
+1. **f.call**(asThis, input1,input2)  
+- 其中 asThis 会被当做 **this**，[input1,input2] 会被当做 **arguments**。 
+- 禁止使用 f(input1, input2)，因为学会 .call 才能理解 this  
+```
+function f(x,y){return x+y}
+f.call(undefined, 1,2)  
+结果：3
+```
+- **this**：就是.call的第一个参数；  
+    注释：一般模式下，this是undefined就自动转换为window；在'use strict'下，就是undefined。
+- **arguments**：.call的第二个及以后的参数组成**伪数组**  
+2. **f(input1,input2)**   
+这是新手或者说是更加常用的函数调用方法，这种方法的参数就是arguments，this参数被隐藏了，知道f()和f.call()的区别就可以了。
+3. **call stack 调用栈**  
+每次进一个函数，就要压一次stack，直到stack overflow即超过了栈的存储空间 ！
+- stackoverflow.com 是一个编程出BUG问题总结的网站，出现BUG时，可以去这个网站看看。
+
