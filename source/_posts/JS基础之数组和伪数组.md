@@ -272,3 +272,100 @@ f.call(undefined, 1,2)
 每次进一个函数，就要压一次stack，直到stack overflow即超过了栈的存储空间 ！
 - stackoverflow.com 是一个编程出BUG问题总结的网站，出现BUG时，可以去这个网站看看。
 
+-------------------------
+## 三、作用域面试题
+- 按照语法树，就近原则  
+- 我们只能确定变量是哪个变量，但是不能确定变量的值
+### 第一题：
+![](https://user-gold-cdn.xitu.io/2019/7/4/16bbce9456e138d3?w=1130&h=705&f=png&s=260699)
+找一个变量的值，首先在本作用域找，找不到再去父亲的作用域找。  
+变形一：
+```
+var a= 1 //若去除此句，则下方a=2则是声明并赋值
+function f1(){
+    a = 2 // 此处是给全局的a赋值为3
+    f2.call()
+    console.log(a)
+    
+    function f2(){
+        var a = 3
+        console.log(a)
+    }
+}
+
+f1.call()
+console.log(a)
+```
+看到代码，一定要先**变量提升！变量提升！变量提升！**
+变形二：
+```
+var a= 1 
+function f1(){
+    f2.call()
+    console.log(a)
+    var a = 2 
+    
+    function f2(){
+        var a = 3
+        console.log(a)
+    }
+}
+
+f1.call()
+console.log(a)
+```
+拿到题，首先做变量提升！提升后结果为：
+```
+var a= 1 
+function f1(){
+    var a
+    function f2(){
+        var a = 3
+        console.log(a) // a === 3
+    }
+    f2.call()
+    console.log(a) // a === undefined 此处a已声明但未赋值，所以是undefined
+    a = 2 
+    
+    
+}
+
+f1.call()
+console.log(a) // a === 1
+```
+### 第二题：
+```
+var a= 1 
+function f1(){
+    console.log(a)
+    var a = 2
+    f2.call()
+}    
+function f2(){
+    console.log(a) // a === 1 f2中没有a，找它的父作用域即全局作用域，找到a=1
+}
+
+
+f1.call()
+console.log(a)
+```
+### 第三题：
+```
+var a = 1
+function f1(){
+    console.log(a) //a === 1 ?
+}
+
+??????       // 这是一行被遮住的代码
+f4.call()
+```
+如题，若被遮住的代码是 a=2 ，那么f1中的a就是2了。  
+### 易错题：
+![](https://user-gold-cdn.xitu.io/2019/7/4/16bbd0d53e729270?w=1173&h=337&f=png&s=150738)
+当点击选项3的时候，会打印出几呢？  
+答案是 6 ！  
+一定要明白，i是哪个i，而i的值又是哪个值，这一切都要结合作用域来理解。
+
+- **闭包**  
+如果一个函数，使用了它作用域之外的变量，那么（这个函数+这个变量）就叫做闭包。  
+（搜索：方应杭 闭包）
